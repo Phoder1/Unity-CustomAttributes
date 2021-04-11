@@ -1,6 +1,7 @@
 ## Custom Attributes
 
 Tested on Unity 2020.3
+
 License: [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/ "GNU GPLv3")
 
 CustomAttributes is a very simple extension for the Unity Inspector.
