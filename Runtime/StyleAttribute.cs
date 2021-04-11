@@ -1,10 +1,13 @@
 using UnityEngine;
-public enum AttributeStyle { Default, FoldOut, Bold, Slim, BoldSlim}
-public class StyleAttribute : PropertyAttribute
+namespace CustomAttributes
 {
-    public readonly AttributeStyle style;
-    public StyleAttribute(AttributeStyle style)
+    public enum AttributeStyle { Default, FoldOut, Bold, Slim, BoldSlim }
+    public class StyleAttribute : PropertyAttribute
     {
-        this.style = style;
+        public readonly AttributeStyle style;
+        public StyleAttribute(AttributeStyle style)
+        {
+            this.style = style;
+        }
     }
 }

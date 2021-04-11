@@ -1,12 +1,14 @@
 using UnityEngine;
-
-public class RenameAttribute : PropertyAttribute
+namespace CustomAttributes
 {
-    private string label;
-    public string Label => label;
-    public RenameAttribute(string label)
+    public class RenameAttribute : PropertyAttribute
     {
-        this.label = label;
-    }
+        private string label;
+        public string Label => label;
+        public RenameAttribute(string label)
+        {
+            this.label = label;
+        }
 
+    }
 }

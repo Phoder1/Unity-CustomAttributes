@@ -1,68 +1,73 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomPropertyDrawer(typeof(LocalComponentAttribute))]
-public class LocalComponentDrawer : PropertyDrawer
+namespace CustomAttributes
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+
+    [CustomPropertyDrawer(typeof(LocalComponentAttribute))]
+    public class LocalComponentDrawer : PropertyDrawer
     {
-        LocalComponentAttribute localComponentAttribute = attribute as LocalComponentAttribute;
-        bool wasEnabled = GUI.enabled;
-        GUI.enabled = false;
-        label.text += " (local)";
-        if (!localComponentAttribute.hideProperty)
-            EditorGUI.PropertyField(position, property, label);
-        GUI.enabled = wasEnabled;
-
-        SerializedProperty sourcePropertyValue = null;
-        GameObject mono = null;
-        if (localComponentAttribute.parentObject != null && localComponentAttribute.parentObject != "")
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            string propertyPath = property.propertyPath; //returns the property path of the property we want to apply the attribute to
-            string conditionPath = propertyPath.Replace(property.name, localComponentAttribute.parentObject); //changes the path to the conditionalsource property path
-            sourcePropertyValue = property.serializedObject.FindProperty(conditionPath);
+            LocalComponentAttribute localComponentAttribute = attribute as LocalComponentAttribute;
+            bool wasEnabled = GUI.enabled;
+            GUI.enabled = false;
+            label.text += " (local)";
+            if (!localComponentAttribute.hideProperty)
+                EditorGUI.PropertyField(position, property, label);
+            GUI.enabled = wasEnabled;
 
-            if (sourcePropertyValue != null)
-                mono = sourcePropertyValue.objectReferenceValue as GameObject;
-            if(mono == null)
+            SerializedProperty sourcePropertyValue = null;
+            GameObject mono = null;
+            if (localComponentAttribute.parentObject != null && localComponentAttribute.parentObject != "")
             {
-                property.objectReferenceValue = null;
-                return;
-            }
-            if(sourcePropertyValue == null)
-            {
-                Debug.LogError("Field " + fieldInfo.Name + " doesn't exist!");
-                return;
-            }
+                string propertyPath = property.propertyPath; //returns the property path of the property we want to apply the attribute to
+                string conditionPath = propertyPath.Replace(property.name, localComponentAttribute.parentObject); //changes the path to the conditionalsource property path
+                sourcePropertyValue = property.serializedObject.FindProperty(conditionPath);
 
+                if (sourcePropertyValue != null)
+                    mono = sourcePropertyValue.objectReferenceValue as GameObject;
+                if (mono == null)
+                {
+                    property.objectReferenceValue = null;
+                    return;
+                }
+                if (sourcePropertyValue == null)
+                {
+                    Debug.LogError("Field " + fieldInfo.Name + " doesn't exist!");
+                    return;
+                }
+
+            }
+            else
+                mono = (property.serializedObject.targetObject as MonoBehaviour).gameObject;
+            //if(fieldInfo.FieldType.IsSubclassOf(typeof(Component)) )
+            if (typeof(Component).IsAssignableFrom(fieldInfo.FieldType))
+            {
+                if (property.objectReferenceValue == null)
+                {
+                    Component comp;
+                    if (localComponentAttribute.getComponentFromChildrens)
+                        comp = mono.GetComponentInChildren(fieldInfo.FieldType);
+                    else
+                        comp = mono.GetComponent(fieldInfo.FieldType);
+
+                    property.objectReferenceValue = comp;
+                }
+            }
+            else
+            {
+                Debug.LogError("Field <b>" + fieldInfo.Name + "</b> of " + mono.GetType() + " is not a component!", mono);
+            }
         }
-        else
-            mono = (property.serializedObject.targetObject as MonoBehaviour).gameObject;
-        //if(fieldInfo.FieldType.IsSubclassOf(typeof(Component)) )
-        if (typeof(Component).IsAssignableFrom(fieldInfo.FieldType))
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            if (property.objectReferenceValue == null)
-            {
-                Component comp;
-                if (localComponentAttribute.getComponentFromChildrens)
-                    comp = mono.GetComponentInChildren(fieldInfo.FieldType);
-                else
-                    comp = mono.GetComponent(fieldInfo.FieldType);
+            LocalComponentAttribute localComponentAttribute = attribute as LocalComponentAttribute;
 
-                property.objectReferenceValue = comp;
-            }
+            if (!localComponentAttribute.hideProperty)
+                return EditorGUI.GetPropertyHeight(property, label);
+            return -EditorGUIUtility.standardVerticalSpacing;
         }
-        else
-        {
-            Debug.LogError("Field <b>" + fieldInfo.Name + "</b> of " + mono.GetType() + " is not a component!", mono);
-        }
-    }
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-    {
-        LocalComponentAttribute localComponentAttribute = attribute as LocalComponentAttribute;
-
-        if (!localComponentAttribute.hideProperty)
-            return EditorGUI.GetPropertyHeight(property, label);
-        return -EditorGUIUtility.standardVerticalSpacing;
     }
 }
+

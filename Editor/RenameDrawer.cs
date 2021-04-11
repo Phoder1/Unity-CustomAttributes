@@ -1,13 +1,16 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomPropertyDrawer(typeof(RenameAttribute))]
-public class RenameDrawer : PropertyDrawer
+namespace CustomAttributes
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    [CustomPropertyDrawer(typeof(RenameAttribute))]
+    public class RenameDrawer : PropertyDrawer
     {
-        RenameAttribute labelAttribute = attribute as RenameAttribute;
-        label.text = labelAttribute.Label;
-        EditorGUI.PropertyField(position, property, label);
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            RenameAttribute labelAttribute = attribute as RenameAttribute;
+            label.text = labelAttribute.Label;
+            EditorGUI.PropertyField(position, property, label);
+        }
     }
 }

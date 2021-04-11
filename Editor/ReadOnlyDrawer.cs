@@ -1,14 +1,17 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
-public class ReadOnlyDrawer : PropertyDrawer
+namespace CustomAttributes
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
+    public class ReadOnlyDrawer : PropertyDrawer
     {
-        bool enabled = GUI.enabled;
-        GUI.enabled = false;
-        EditorGUI.PropertyField(position, property, label);
-        GUI.enabled = enabled;
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            bool enabled = GUI.enabled;
+            GUI.enabled = false;
+            EditorGUI.PropertyField(position, property, label);
+            GUI.enabled = enabled;
+        }
     }
 }

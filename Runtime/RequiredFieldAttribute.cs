@@ -1,14 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-public enum ErrorLogType { HighlightOnly, Warning, Error}
-public class RequiredFieldAttribute : PropertyAttribute
+namespace CustomAttributes
 {
-    public readonly ErrorLogType errorLogType;
-
-    public RequiredFieldAttribute(ErrorLogType errorLogType)
+    public enum ErrorLogType { HighlightOnly, Warning, Error }
+    public class RequiredFieldAttribute : PropertyAttribute
     {
-        this.errorLogType = errorLogType;
+        public readonly ErrorLogType errorLogType;
+
+        public RequiredFieldAttribute(ErrorLogType errorLogType)
+        {
+            this.errorLogType = errorLogType;
+        }
     }
 }

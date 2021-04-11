@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public class ReadOnlyAttribute : PropertyAttribute
+namespace CustomAttributes
 {
+    public class ReadOnlyAttribute : PropertyAttribute
+    {
 
+    }
 }
