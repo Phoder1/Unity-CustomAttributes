@@ -1,4 +1,4 @@
-##Custom Attributes
+## Custom Attributes
 
 Tested on Unity 2020.3
 License: [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/ "GNU GPLv3")
@@ -8,11 +8,11 @@ In order to keep the scripts simple and increase the chance of older and future 
 
 All attributes are made with unity `CustomPropertyDrawer` feature, for refrence see [here](https://docs.unity3d.com/Manual/editor-PropertyDrawers.html "here").
 
-#####System Requirements
+##### System Requirements
 
 Tested on unity 2020.3, but will most likely work on on any version after 2018.
 Dont forget to use the CustomAttributes namespace.
-###Installation:
+### Installation:
 Installation can either be done using the git URL:
 	`https://github.com/Phoder1/com.alontalmi.customattributes.git`
 1. By clicking on the + sign in the unity package manager, selecting:
