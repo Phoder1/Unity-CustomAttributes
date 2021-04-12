@@ -2,7 +2,7 @@
 
 Tested on Unity 2020.3
 
-License: [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/ "GNU GPLv3")
+License: [MIT](https://choosealicense.com/licenses/mit/#")
 
 CustomAttributes is a very simple extension for the Unity Inspector.
 In order to keep the scripts simple and increase the chance of older and future unity versions compatability, I made sure no attribute script inherits from any outside scripts or core extensions and are all compelety independent, but also limited to the basic attribute features.
