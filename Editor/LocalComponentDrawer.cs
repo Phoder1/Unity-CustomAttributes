@@ -11,19 +11,25 @@ namespace CustomAttributes
         {
             LocalComponentAttribute localComponentAttribute = attribute as LocalComponentAttribute;
             bool wasEnabled = GUI.enabled;
-            GUI.enabled = false;
-            label.text += " (local)";
+            if (!label.text.Contains(" (local)"))
+                label.text += " (local)";
+
+            if (localComponentAttribute.lockProperty)
+                GUI.enabled = false;
+
             if (!localComponentAttribute.hideProperty)
                 EditorGUI.PropertyField(position, property, label);
-            GUI.enabled = wasEnabled;
 
-            SerializedProperty sourcePropertyValue = null;
+            GUI.enabled = wasEnabled;
+            if (property.objectReferenceValue != null)
+                return;
+
             GameObject mono = null;
             if (localComponentAttribute.parentObject != null && localComponentAttribute.parentObject != "")
             {
                 string propertyPath = property.propertyPath; //returns the property path of the property we want to apply the attribute to
                 string conditionPath = propertyPath.Replace(property.name, localComponentAttribute.parentObject); //changes the path to the conditionalsource property path
-                sourcePropertyValue = property.serializedObject.FindProperty(conditionPath);
+                SerializedProperty sourcePropertyValue = property.serializedObject.FindProperty(conditionPath);
 
                 if (sourcePropertyValue != null)
                     mono = sourcePropertyValue.objectReferenceValue as GameObject;
