@@ -15,12 +15,12 @@ Tested on unity 2020.3, but will most likely work on on any version after 2018.
 Dont forget to use the CustomAttributes namespace.
 ### Installation:
 Installation can either be done using the git URL:
-	`https://github.com/Phoder1/com.alontalmi.customattributes.git`
+	`https://github.com/Phoder1/Unity-CustomAttributes.git`
 1. By clicking on the + sign in the unity package manager, selecting:
 	"Add package from git URL" and pasting the git URL. 
 2. By adding to your manifest.json file in your project package folder the following line:
 
-`"com.alontalmi.customattributes": "https://github.com/Phoder1/com.alontalmi.customattributes.git"`
+`"com.alontalmi.customattributes": "https://github.com/Phoder1/Unity-CustomAttributes.git"`
 
 ##### Support
 
