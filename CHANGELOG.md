@@ -1,3 +1,1 @@
-- Fixed LocalComponent "(local)" name showing multiple times.
-- Added option to disable the LocalComponent property locking by setting "lockProperty" to false.
-- Changed license to MIT! not sure why it wasn't MIT in the first place, I must have been tired :/
+- Serious bug fix!: Editor assembly was not set to Editor only and was causing build errors.
