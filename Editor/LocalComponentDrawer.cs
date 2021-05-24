@@ -21,9 +21,23 @@ namespace CustomAttributes
                 EditorGUI.PropertyField(position, property, label);
 
             GUI.enabled = wasEnabled;
-            if (property.objectReferenceValue != null)
-                return;
 
+            if (property.serializedObject.isEditingMultipleObjects)
+            {
+                if (property.hasMultipleDifferentValues)
+                    EditorGUI.showMixedValue = true;
+            }
+            else
+            {
+                if (property.objectReferenceValue != null)
+                    return;
+
+                AssignValues(property, localComponentAttribute);
+            }
+        }
+
+        private void AssignValues(SerializedProperty property, LocalComponentAttribute localComponentAttribute)
+        {
             GameObject mono = null;
             if (localComponentAttribute.parentObject != null && localComponentAttribute.parentObject != "")
             {
@@ -66,6 +80,7 @@ namespace CustomAttributes
                 Debug.LogError("Field <b>" + fieldInfo.Name + "</b> of " + mono.GetType() + " is not a component!", mono);
             }
         }
+
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             LocalComponentAttribute localComponentAttribute = attribute as LocalComponentAttribute;
