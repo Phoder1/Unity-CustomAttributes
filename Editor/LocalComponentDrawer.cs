@@ -26,18 +26,22 @@ namespace CustomAttributes
             {
                 if (property.hasMultipleDifferentValues)
                     EditorGUI.showMixedValue = true;
+
+                foreach (var obj in property.serializedObject.targetObjects)
+                {
+                    var prop = new SerializedObject(obj).FindProperty(property.propertyPath);
+                    AssignValues(prop, localComponentAttribute);
+                }
             }
             else
-            {
-                if (property.objectReferenceValue != null)
-                    return;
-
                 AssignValues(property, localComponentAttribute);
-            }
         }
 
         private void AssignValues(SerializedProperty property, LocalComponentAttribute localComponentAttribute)
         {
+            if (property.objectReferenceValue != null)
+                return;
+
             GameObject mono = null;
             if (localComponentAttribute.parentObject != null && localComponentAttribute.parentObject != "")
             {
