@@ -29,7 +29,14 @@ namespace CustomAttributes
 
                 foreach (var obj in property.serializedObject.targetObjects)
                 {
+                    if (obj == null)
+                        continue;
+
                     var prop = new SerializedObject(obj).FindProperty(property.propertyPath);
+
+                    if (prop == null)
+                        continue;
+
                     AssignValues(prop, localComponentAttribute);
                 }
             }
