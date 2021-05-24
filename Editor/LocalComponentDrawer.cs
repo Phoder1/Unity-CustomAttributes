@@ -24,21 +24,24 @@ namespace CustomAttributes
 
             if (property.serializedObject.isEditingMultipleObjects)
             {
-                if (property.hasMultipleDifferentValues)
-                    EditorGUI.showMixedValue = true;
-
                 foreach (var obj in property.serializedObject.targetObjects)
                 {
                     if (obj == null)
                         continue;
 
-                    var prop = new SerializedObject(obj).FindProperty(property.propertyPath);
+                    var serObj = new SerializedObject(obj);
+                    var prop = serObj.FindProperty(property.propertyPath);
+
 
                     if (prop == null)
                         continue;
 
                     AssignValues(prop, localComponentAttribute);
+
+                    serObj.ApplyModifiedProperties();
                 }
+                if (property.hasMultipleDifferentValues)
+                    EditorGUI.showMixedValue = true;
             }
             else
                 AssignValues(property, localComponentAttribute);
