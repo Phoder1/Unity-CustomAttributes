@@ -1,19 +1,22 @@
 using UnityEngine;
 namespace CustomAttributes
 {
+        public enum GetComponentTargets { Local, Childrens, Parents, Anywhere}
     public class LocalComponentAttribute : PropertyAttribute
     {
-        public readonly bool getComponentFromChildrens;
-        public readonly bool hideProperty;
-        public readonly string parentObject;
-        public readonly bool lockProperty;
+        public readonly GetComponentTargets getComponentFromChildrens = GetComponentTargets.Local;
+        public readonly bool hideProperty = false;
+        public readonly string parentObject = null;
+        public readonly bool lockProperty = false;
+        public readonly bool includeInactive = false;
+
         /// <summary>
-        /// An "Auto-Hook" components attribute, will try to use GetComponent during inspector update, and can help reduce runtime hooking or manual grabbing.
+        /// 
         /// </summary>
         /// <param name="hideProperty">
         /// If true the property will be hidden if assigned.
         /// </param>
-        /// <param name="getComponentFromChildrens">
+        /// <param name="getComponentTargets">
         /// If true, will try to find the component in child objects.
         /// </param>
         /// <param name="parentObject">
@@ -22,12 +25,13 @@ namespace CustomAttributes
         /// <param name="lockProperty">
         /// If true the property will be unassignable manually. 
         /// </param>
-        public LocalComponentAttribute(bool hideProperty = false, bool getComponentFromChildrens = false, string parentObject = "", bool lockProperty = true)
+        public LocalComponentAttribute(bool hideProperty = false, bool lockProperty = false, GetComponentTargets getComponentTargets = GetComponentTargets.Local, bool includeInactive = false, string parentObject = null)
         {
-            this.getComponentFromChildrens = getComponentFromChildrens;
+            this.getComponentFromChildrens = getComponentTargets;
             this.hideProperty = hideProperty;
             this.parentObject = parentObject;
             this.lockProperty = lockProperty;
+            this.includeInactive = includeInactive;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,19 +11,9 @@ namespace CustomAttributes
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             LocalComponentAttribute localComponentAttribute = attribute as LocalComponentAttribute;
-            bool wasEnabled = GUI.enabled;
-            if (!label.text.Contains(" (local)"))
-                label.text += " (local)";
 
-            if (localComponentAttribute.lockProperty)
-                GUI.enabled = false;
-
-            if (!localComponentAttribute.hideProperty)
-                EditorGUI.PropertyField(position, property, label);
-
-            GUI.enabled = wasEnabled;
-
-            if (property.serializedObject.isEditingMultipleObjects)
+            bool multiEdit = property.serializedObject.isEditingMultipleObjects;
+            if (multiEdit)
             {
                 foreach (var obj in property.serializedObject.targetObjects)
                 {
@@ -40,11 +31,33 @@ namespace CustomAttributes
 
                     serObj.ApplyModifiedProperties();
                 }
-                if (property.hasMultipleDifferentValues)
-                    EditorGUI.showMixedValue = true;
             }
             else
+            {
                 AssignValues(property, localComponentAttribute);
+            }
+
+            bool wasEnabled = GUI.enabled;
+
+            if (property.objectReferenceValue == null)
+            {
+                EditorGUI.PropertyField(position, property, label);
+            }
+            else
+            {
+                if (localComponentAttribute.lockProperty)
+                    GUI.enabled = false;
+
+                if (!localComponentAttribute.hideProperty)
+                    EditorGUI.PropertyField(position, property, label);
+
+
+                if (multiEdit && property.hasMultipleDifferentValues)
+                    EditorGUI.showMixedValue = true;
+            }
+
+
+            GUI.enabled = wasEnabled;
         }
 
         private void AssignValues(SerializedProperty property, LocalComponentAttribute localComponentAttribute)
@@ -80,11 +93,35 @@ namespace CustomAttributes
             {
                 if (property.objectReferenceValue == null)
                 {
-                    Component comp;
-                    if (localComponentAttribute.getComponentFromChildrens)
-                        comp = mono.GetComponentInChildren(fieldInfo.FieldType);
-                    else
-                        comp = mono.GetComponent(fieldInfo.FieldType);
+                    Component comp = null;
+                    bool includeInactive = localComponentAttribute.includeInactive;
+                    switch (localComponentAttribute.getComponentFromChildrens)
+                    {
+                        default:
+                        case GetComponentTargets.Local:
+                            comp = mono.GetComponent(fieldInfo.FieldType);
+                            break;
+                        case GetComponentTargets.Childrens:
+                            comp = mono.GetComponentInChildren(fieldInfo.FieldType, includeInactive);
+                            break;
+                        case GetComponentTargets.Parents:
+#if UNITY_2021_2_OR_NEWER
+                            comp = mono.GetComponentInParent(fieldInfo.FieldType, includeInactive);
+#else
+                            comp = mono.GetComponentInParent(fieldInfo.FieldType);
+#endif
+                            break;
+                        case GetComponentTargets.Anywhere:
+                            var roots = mono.scene.GetRootGameObjects();
+                            foreach (var root in roots)
+                            {
+                                comp = root.GetComponentInChildren(fieldInfo.FieldType, includeInactive);
+
+                                if (comp != null)
+                                    break;
+                            }
+                            break;
+                    }
 
                     property.objectReferenceValue = comp;
                 }
@@ -99,7 +136,7 @@ namespace CustomAttributes
         {
             LocalComponentAttribute localComponentAttribute = attribute as LocalComponentAttribute;
 
-            if (!localComponentAttribute.hideProperty)
+            if (property.objectReferenceValue == null || !localComponentAttribute.hideProperty)
                 return EditorGUI.GetPropertyHeight(property, label);
             return -EditorGUIUtility.standardVerticalSpacing;
         }
